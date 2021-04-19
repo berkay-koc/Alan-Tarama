@@ -32,3 +32,4 @@ start = time.time()#end koymayı unutma!!!!!
 
 Instances = np.round(np.random.rand(Pop, uzunluk)*7)
 print("B matrisi\n", Instances)
+print("Deneme")
