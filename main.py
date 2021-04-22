@@ -1,3 +1,4 @@
+import random
 import sys
 import numpy as np
 import time
@@ -24,10 +25,9 @@ len = 0
 len = drones*(area_x * area_y - 1)
 Instances_matrix = [0]
 mu = 0.01
+cross = 0
 Gen = 1
-cross = 1
 BK = Pop - Pop / 2  # direkt aktarılacak nesil üyesi sayısı
-B = np.zeros((Pop, len), dtype=int)
 bas_x = 4
 bas_y = 4
 sum = 0
@@ -60,10 +60,11 @@ for i in range(Gen):
                         f3[j] += 1
                     location = next_location
                 Area_matrix[location[0], location[1]] = d+1
+
             f1[j] = np.count_nonzero(Area_matrix)
-            for a in range(len-1):
-                instance_next = instance[a+1]
-                instance_curr = instance[a]
+            for m in range(len-1):
+                instance_next = instance[m+1]
+                instance_curr = instance[m]
                 sum = sum + (180-(abs(instance_next-instance_curr)*45))
             f2[j] = sum
             sum = 0
@@ -77,22 +78,42 @@ for i in range(Gen):
     fitness = normalized_f2+normalized_f1+normalized_f3
 
     normalized_fitness = fitness / np.sum(fitness)
-
+    #print(normalized_fitness)
     indexes = np.argsort(normalized_fitness)
-    normalized_fitness = np.sort(normalized_fitness)
-    normalized_fitness = normalized_fitness[::-1]
     indexes = indexes[::-1]
-    selection[]
-    print(normalized_fitness)
-    print(indexes)
-    for i in range(Pop):
-        selection[indexes[i]] = 10-i
-    print(selection)
+    selection = np.zeros(Pop, dtype = float)
+    #print('normalized_fitness\n',normalized_fitness)
+    #print(indexes)
+    i = 0
+    for l in range(Pop):
+        selection[indexes[l]] = Pop - l
+    selection = selection / np.sum(selection)
+    #print(selection)
+    #print(np.sum(selection))
     best_index = indexes[0]
-    avg_instance[i] = np.mean(fitness)
-    best_instance[i] = fitness[best_index]
+    '''avg_instance[i] = np.mean(fitness)
+    best_instance[i] = fitness[best_index]'''
+    #print('selection\n', selection)
+    chosen = np.random.choice(Pop, Pop, replace=True, p=selection)
+    print(chosen)
+    #print('randsample\n',np.random.choice(Pop, Pop, replace=True, p=selection))
+    New_Instances = np.zeros((Pop, len), dtype=int)
+    #print(New_Instances)
+    for n in range(int(Pop/2)-1):
+        New_Instances1 = Instances_matrix[chosen[n]];
+        New_Instances2 = Instances_matrix[chosen[n+int(Pop/2)-1]]
+        cross = np.random.rand(1)*(len-3)+2
+        print(cross)
+        New_Instances[n] = 
 
 
+
+
+
+
+
+'''def turn_back(start, location):
+    if location[0] >= start[0] and location[1] >= start[1]'''
 
 
 
