@@ -3,6 +3,10 @@ import sys
 import numpy as np
 import time
 np.set_printoptions(threshold=sys.maxsize)
+
+def crossover(a, b, cross):
+    return np.concatenate([a[:cross], b[cross:]])
+
 hareket = [[0, 1],  # yukarı
            [-1, 1],  # sol üst
            [-1, 0],  # sol
@@ -14,7 +18,7 @@ hareket = [[0, 1],  # yukarı
 
 area_x = 9
 area_y = 9
-Pop = 10
+Pop = 50
 drones = 2
 d = 0
 i = 0
@@ -26,8 +30,8 @@ len = drones*(area_x * area_y - 1)
 Instances_matrix = [0]
 mu = 0.01
 cross = 0
-Gen = 1
-BK = Pop - Pop / 2  # direkt aktarılacak nesil üyesi sayısı
+Gen = 20
+BK = int(Pop - Pop / 2)  # direkt aktarılacak nesil üyesi sayısı
 bas_x = 4
 bas_y = 4
 sum = 0
@@ -78,37 +82,32 @@ for i in range(Gen):
     fitness = normalized_f2+normalized_f1+normalized_f3
 
     normalized_fitness = fitness / np.sum(fitness)
-    #print(normalized_fitness)
     indexes = np.argsort(normalized_fitness)
     indexes = indexes[::-1]
     selection = np.zeros(Pop, dtype = float)
-    #print('normalized_fitness\n',normalized_fitness)
-    #print(indexes)
     i = 0
     for l in range(Pop):
         selection[indexes[l]] = Pop - l
     selection = selection / np.sum(selection)
-    #print(selection)
-    #print(np.sum(selection))
     best_index = indexes[0]
-    '''avg_instance[i] = np.mean(fitness)
-    best_instance[i] = fitness[best_index]'''
-    #print('selection\n', selection)
+    '''avg_instance[i] = np.mean(fitness)'''
+    best_instance = fitness[best_index]
     chosen = np.random.choice(Pop, Pop, replace=True, p=selection)
-    print(chosen)
-    #print('randsample\n',np.random.choice(Pop, Pop, replace=True, p=selection))
     New_Instances = np.zeros((Pop, len), dtype=int)
-    #print(New_Instances)
     for n in range(int(Pop/2)-1):
         New_Instances1 = Instances_matrix[chosen[n]];
-        New_Instances2 = Instances_matrix[chosen[n+int(Pop/2)-1]]
-        cross = np.random.rand(1)*(len-3)+2
-        print(cross)
-        New_Instances[n] = 
-
-
-
-
+        New_Instances2 = Instances_matrix[chosen[n+int(Pop/2)]]
+        cross = int(np.random.rand(1)*(len-3)+2)
+        New_Instances[n] = crossover(New_Instances1, New_Instances2, cross)
+        New_Instances[n+int(Pop/2)] = crossover(New_Instances2, New_Instances1, cross)
+    Mutated_cells = np.random.rand(Pop, len)<mu
+    for x in range(Pop):
+        for y in range(len):
+            if Mutated_cells[x][y] <= mu:
+                New_Instances[x][y] = np.round(np.random.rand(1, 1)*7)
+    New_Instances[indexes[:BK]] = Instances_matrix[indexes[:BK]]
+    Instances_matrix = New_Instances
+    print(best_instance)
 
 
 
