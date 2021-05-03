@@ -19,8 +19,8 @@ hareket = [[0, 1],  # yukarı 0
 
 area_x = 9
 area_y = 9
-Pop = 500
-drones = 4
+Pop = 1000
+drones = 2
 d = 0
 i = 0
 j = 0
@@ -30,7 +30,7 @@ len = drones*(area_x * area_y - 1)
 Instances_matrix = [0]
 mu = 0.01
 cross = 0
-Gen = 20
+Gen = 200
 BK = int(Pop - Pop / 2)  # direkt aktarılacak nesil üyesi sayısı
 bas_x = 4
 bas_y = 4
@@ -139,17 +139,18 @@ for i in range(Gen):
     #print(end_time - start)
     #print(New_Instances)
     #print('********************************')
+print(instance)
 print(nf1)
 print(nf2)
 print(nf3)
 #print(Instances_matrix[0])
 #print(best_instance)
 #print(avg_instance)
-plt.plot(nf1)
-plt.plot(nf2)
-plt.plot(nf3)
-#plt.plot(best_instance)
-#plt.plot(avg_instance)
+#plt.plot(nf1)
+#plt.plot(nf2)
+#plt.plot(nf3)
+plt.plot(best_instance)
+plt.plot(avg_instance)
 plt.show()
 
 
