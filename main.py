@@ -19,7 +19,7 @@ hareket = [[0, 1],  # yukarı 0
 
 area_x = 9
 area_y = 9
-Pop = 5000
+Pop = 500
 drones = 2
 d = 0
 i = 0
@@ -30,7 +30,7 @@ len = drones*(area_x * area_y - 1)
 Instances_matrix = [0]
 mu = 0.01
 cross = 0
-Gen = 200
+Gen = 20
 BK = int(Pop - Pop / 2)  # direkt aktarılacak nesil üyesi sayısı
 bas_x = 0
 bas_y = 0
@@ -54,14 +54,14 @@ for i in range(Gen):
     f1 = np.zeros((Pop), dtype=int)
     f2 = np.zeros((Pop), dtype=int)
     f3 = np.zeros((Pop), dtype=int)
+    print(i,'.nesil',Instances_matrix)
     for j in range(Pop):
         Area_matrix = np.zeros((area_x, area_y), dtype=int)
         instance = Instances_matrix[j]
         instance = np.array(instance)
-        #print(instance)
+        #print(j,'.Birey: ',instance)
         location = np.array([bas_x, bas_y])
         Area_matrix[bas_x, bas_y] = 1
-        instance_curr = instance[0]
         for d in range(drones):
             for k in range((area_x*area_y)-1):
                 next_location[0] = 0
@@ -71,29 +71,31 @@ for i in range(Gen):
                 next_location = np.add(location, hareket[instance[(((area_x * area_y) - 1) * d) + k]])
                 #print('AAAAAAAAAAAAAAAAAAA',next_location)
                 #print(k, ': ', next_location)
-
                 if next_location[0] >= 0 and next_location[1] >= 0 and next_location[0] <= area_x-1 and next_location[1] <= area_y-1:
-                    if Area_matrix[next_location[0], next_location[1]] == 0 :
+                    if Area_matrix[next_location[0], next_location[1]] == 0:
                         f3[j] += 1
-                    instance_next = instance[(((area_x * area_y) - 1) * d) + k]
-                    sum = sum + abs(180 - (abs(instance_next - instance_curr) * 45))
-                    instance_curr=instance_next
+                    #instance_next = instance[(((area_x * area_y) - 1) * d) + k]
+                    #sum = sum + abs(180 - (abs(instance_next - instance_curr) * 45))
+                    #instance_curr=instance_next
                     location[0] = next_location[0]
                     location[1] = next_location[1]
                     #print(k, ': ', location)
                     Area_matrix[location[0], location[1]] = d+1
+
             #print(Area_matrix)
+            #print(d,'.dronun gittiği yol\n',Area_matrix)
 
 
-            '''for m in range(len-1):
-                instance_next = instance[m+1]
-                instance_curr = instance[m]
-                sum = sum + abs(180-(abs(instance_next-instance_curr)*45))
-            f2[j] = sum
-            sum = 0'''
-        f2[j]=sum
+        for m in range(len-1):
+            instance_next = instance[m+1]
+            instance_curr = instance[m]
+            sum = sum + (abs(4-(abs(instance_next-instance_curr))))*45
+        f2[j] = sum
         sum = 0
+        #f2[j]=sum
+        #sum = 0
         f1[j] = np.count_nonzero(Area_matrix)
+        #print(j,'.elemanın f1 değeri',f1[j])
     #print(instance)
     #w = fitness
     #n_w = normalized_fitness
@@ -107,9 +109,9 @@ for i in range(Gen):
     normalized_f3 = f3 / max_f3
     #normalized_f3 = 1 - normalized_f3
     nf3.append(np.mean(normalized_f3))
-    #plt.plot(nf1)
-    #plt.plot(nf2)
-    #plt.plot(nf3)
+    plt.plot(nf1)
+    plt.plot(nf2)
+    plt.plot(nf3)
     #plt.plot(normalized_f3)
     #print("Norm_f3 ", i, normalized_f3)
     fitness = normalized_f1+normalized_f2+normalized_f3
@@ -143,7 +145,7 @@ for i in range(Gen):
         New_Instances[index] = Instances_matrix[index]
     Instances_matrix = New_Instances
     end_time = time.time()
-    print(end_time - start)
+    #print(end_time - start)
     #print(New_Instances)
     #print('********************************')
 #print(nf1)
@@ -152,8 +154,8 @@ for i in range(Gen):
 #print(Instances_matrix[0])
 #print(best_instance)
 #print(avg_instance)
-plt.plot(best_instance)
-plt.plot(avg_instance)
+#plt.plot(best_instance)
+#plt.plot(avg_instance)
 plt.show()
 
 
