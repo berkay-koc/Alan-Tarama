@@ -1,8 +1,10 @@
 import random
+import statistics
 import sys
 import numpy as np
 import time
 from matplotlib import pyplot as plt
+
 np.set_printoptions(threshold=sys.maxsize)
 
 def crossover(a, b, cross):
@@ -19,26 +21,26 @@ hareket = [[0, 1],  # yukarı 0
 
 area_x = 9
 area_y = 9
-Pop = 1000
-drones = 2
+Pop = 500
+drones = 4
 d = 0
 i = 0
 j = 0
 next_location = np.array([0, 0])
 location = np.array([0, 0])
-len = drones*(area_x * area_y - 1)
+len = drones*20
 Instances_matrix = [0]
 mu = 0.01
 cross = 0
-Gen = 200
+Gen = 100
 BK = int(Pop - Pop / 2)  # direkt aktarılacak nesil üyesi sayısı
-bas_x = 4
-bas_y = 4
+bas_x = 0
+bas_y = 0
 sum = 0
 baslangic = [bas_x, bas_y]
-max_f1 = area_y*area_y
-max_f2 = 180 * (len - 1)
-max_f3 = ((area_y*area_x) - 1)*(drones)
+max_f1 = len-1
+max_f2 = ((len - 1))*4
+max_f3 = (len)*(drones)
 best_instance = []
 avg_instance = []
 nf1 = []
@@ -74,13 +76,10 @@ for i in range(Gen):
         for m in range(len - 1):
             instance_next = instance[m + 1]
             instance_curr = instance[m]
-            sum = sum + (abs(4 - (abs(instance_next - instance_curr)))) * 45
+            sum = sum + (abs(4 - (abs(instance_next - instance_curr))))
         f2[j] = sum
         sum = 0
-        # f2[j]=sum
-        # sum = 0
         f1[j] = np.count_nonzero(Area_matrix)
-
     #print(instance)
     #w = fitness
     #n_w = normalized_fitness
@@ -89,6 +88,7 @@ for i in range(Gen):
     nf1.append(np.mean(normalized_f1))
     #print("Norm_f1 ",i , normalized_f1)
     normalized_f2 = f2 / max_f2
+    print(normalized_f2)
     nf2.append(np.mean(normalized_f2))
     #print("Norm_f2 ", i, normalized_f2)
     normalized_f3 = f3 / max_f3
@@ -146,11 +146,11 @@ print(nf3)
 #print(Instances_matrix[0])
 #print(best_instance)
 #print(avg_instance)
-#plt.plot(nf1)
-#plt.plot(nf2)
-#plt.plot(nf3)
-plt.plot(best_instance)
-plt.plot(avg_instance)
+plt.plot(nf1)
+plt.plot(nf2)
+plt.plot(nf3)
+#plt.plot(best_instance)
+#plt.plot(avg_instance)
 plt.show()
 
 
