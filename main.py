@@ -10,6 +10,13 @@ np.set_printoptions(threshold=sys.maxsize)
 def crossover(a, b, cross):
     return np.concatenate([a[:cross], b[cross:]])
 
+def maximum(a, b):
+
+    if a >= b:
+        return a
+    else:
+        return b
+
 hareket = [[0, 1],  # yukarı 0
            [-1, 1],  # sol üst 1
            [-1, 0],  # sol 2
@@ -21,37 +28,42 @@ hareket = [[0, 1],  # yukarı 0
 
 area_x = 9
 area_y = 9
-Pop = 500
-drones = 4
+Pop = 1000
+drones = 2
 d = 0
 i = 0
 j = 0
+k = 1
+
 next_location = np.array([0, 0])
 location = np.array([0, 0])
-len = drones*20
+
+len = drones*80
 Instances_matrix = [0]
 mu = 0.01
 cross = 0
-Gen = 100
-BK = int(Pop - Pop / 2)  # direkt aktarılacak nesil üyesi sayısı
-bas_x = 0
-bas_y = 0
+Gen = 10
+BK = int(Pop / 2)  # direkt aktarılacak nesil üyesi sayısı
+bas_x = 4
+bas_y = 4
 sum = 0
 baslangic = [bas_x, bas_y]
-max_f1 = len-1
-max_f2 = ((len - 1))*4
-max_f3 = (len)*(drones)
+max_f1 = (area_x*area_y)-1
+max_f2 = ((len - 1))*180
+max_f3 = (area_x*area_y)*(drones)
 best_instance = []
 avg_instance = []
 nf1 = []
 nf2 = []
 nf3 = []
-
+location_matrix = np.zeros((drones, int(len/drones)), dtype=int)
 
 start = time.time()#end koymayı unutma!!!!!
 
 Instances_matrix = np.round(np.random.rand(Pop, len)*7)
 Instances_matrix = Instances_matrix.astype(np.int64)
+for f in range(drones):
+    location_matrix[f,0] = bas_x*10+bas_y
 for i in range(Gen):
     f1 = np.zeros((Pop), dtype=int)
     f2 = np.zeros((Pop), dtype=int)
@@ -66,17 +78,20 @@ for i in range(Gen):
             for d in range(drones):
                 next_location[0] = 0
                 next_location[1] = 0
+                location[0] = location_matrix[d,k-1] % 10
+                location[1] = location_matrix[d,k-1] - location[0]*10
                 next_location = np.add(location, hareket[instance[(int(len/drones) * d) + k]])
                 if next_location[0] >= 0 and next_location[1] >= 0 and next_location[0] <= area_x - 1 and next_location[1] <= area_y - 1:
                     if Area_matrix[next_location[0], next_location[1]] != d+1 and Area_matrix[next_location[0], next_location[1]] != 0:
                         f3[j] += 1
-                    location[0] = next_location[0]
-                    location[1] = next_location[1]
+                    location_matrix[d,k] = next_location[0]*10+next_location[1]
+
                     Area_matrix[location[0], location[1]] = d+1
+        print(location)
         for m in range(len - 1):
             instance_next = instance[m + 1]
             instance_curr = instance[m]
-            sum = sum + (abs(4 - (abs(instance_next - instance_curr))))
+            sum = sum + (abs(4 - (abs(instance_next - instance_curr))))*45
         f2[j] = sum
         sum = 0
         f1[j] = np.count_nonzero(Area_matrix)
@@ -108,7 +123,7 @@ for i in range(Gen):
     normalized_fitness = normalized_fitness/np.sum(normalized_fitness)
     indexes = np.argsort(normalized_fitness)
     indexes = indexes[::-1]
-    selection = np.zeros(Pop, dtype = float)
+    selection = np.zeros(Pop, dtype = int)
     for l in range(Pop):
         selection[indexes[l]] = Pop - l
     selection = selection / np.sum(selection)
@@ -124,33 +139,40 @@ for i in range(Gen):
         New_Instances[n] = crossover(New_Instances1, New_Instances2, cross)
         New_Instances[n+int(Pop/2)] = crossover(New_Instances2, New_Instances1, cross)
     Mutated_cells = np.random.rand(Pop, len) < mu
-    for z in range(BK):
+    '''for z in range(BK):
         index = indexes[z]
-        New_Instances[index] = Instances_matrix[index]
+        New_Instances[BK] = Instances_matrix[index]
+        BK += 1
+    BK = int(Pop/2)'''
     for x in range(Pop):
         for y in range(len):
             if Mutated_cells[x][y] <= mu:
                 New_Instances[x][y] = np.round(np.random.rand(1, 1)*7)
     for z in range(BK):
         index = indexes[z]
-        New_Instances[index] = Instances_matrix[index]
+        New_Instances[BK] = Instances_matrix[index]
+        BK += 1
+    BK = int(Pop/2)
     Instances_matrix = New_Instances
     end_time = time.time()
     #print(end_time - start)
     #print(New_Instances)
     #print('********************************')
-print(instance)
+print(New_Instances[0])
+print(Instances_matrix[0])
 print(nf1)
 print(nf2)
 print(nf3)
+print(location_matrix)
 #print(Instances_matrix[0])
 #print(best_instance)
 #print(avg_instance)
-plt.plot(nf1)
-plt.plot(nf2)
-plt.plot(nf3)
-#plt.plot(best_instance)
-#plt.plot(avg_instance)
+#plt.plot(nf1)
+#plt.plot(nf2)
+#plt.plot(nf3)
+plt.imshow(location_matrix)
+plt.plot(best_instance)
+plt.plot(avg_instance)
 plt.show()
 
 
