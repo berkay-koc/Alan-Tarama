@@ -64,6 +64,7 @@ Instances_matrix = np.round(np.random.rand(Pop, len)*7)
 Instances_matrix = Instances_matrix.astype(np.int64)
 for f in range(drones):
     location_matrix[f,0] = bas_x*10+bas_y
+
 for i in range(Gen):
     f1 = np.zeros((Pop), dtype=int)
     f2 = np.zeros((Pop), dtype=int)
@@ -78,16 +79,18 @@ for i in range(Gen):
             for d in range(drones):
                 next_location[0] = 0
                 next_location[1] = 0
-                location[0] = location_matrix[d,k-1] % 10
-                location[1] = location_matrix[d,k-1] - location[0]*10
+                location[0] = location_matrix[d,k] % 10
+                location[1] = location_matrix[d,k] - location[0]*10
+                print(location)
                 next_location = np.add(location, hareket[instance[(int(len/drones) * d) + k]])
                 if next_location[0] >= 0 and next_location[1] >= 0 and next_location[0] <= area_x - 1 and next_location[1] <= area_y - 1:
                     if Area_matrix[next_location[0], next_location[1]] != d+1 and Area_matrix[next_location[0], next_location[1]] != 0:
                         f3[j] += 1
-                    location_matrix[d,k] = next_location[0]*10+next_location[1]
+                    location_matrix[d,k+1] = next_location[0]*10+next_location[1]
+                    print(location_matrix)
 
                     Area_matrix[location[0], location[1]] = d+1
-        print(location)
+
         for m in range(len - 1):
             instance_next = instance[m + 1]
             instance_curr = instance[m]
