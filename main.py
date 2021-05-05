@@ -38,14 +38,14 @@ k = 1
 next_location = np.array([0, 0])
 location = np.array([0, 0])
 
-len = drones*80
+len = drones*20
 Instances_matrix = [0]
 mu = 0.01
 cross = 0
-Gen = 10
+Gen = 100
 BK = int(Pop / 2)  # direkt aktarılacak nesil üyesi sayısı
-bas_x = 4
-bas_y = 4
+bas_x = 0
+bas_y = 0
 sum = 0
 baslangic = [bas_x, bas_y]
 max_f1 = (area_x*area_y)-1
@@ -79,17 +79,19 @@ for i in range(Gen):
             for d in range(drones):
                 next_location[0] = 0
                 next_location[1] = 0
-                location[0] = location_matrix[d,k] % 10
+                location[0] = int(location_matrix[d,k] / 10)
                 location[1] = location_matrix[d,k] - location[0]*10
-                print(location)
+                #print('drone:', d,location)
                 next_location = np.add(location, hareket[instance[(int(len/drones) * d) + k]])
                 if next_location[0] >= 0 and next_location[1] >= 0 and next_location[0] <= area_x - 1 and next_location[1] <= area_y - 1:
                     if Area_matrix[next_location[0], next_location[1]] != d+1 and Area_matrix[next_location[0], next_location[1]] != 0:
                         f3[j] += 1
                     location_matrix[d,k+1] = next_location[0]*10+next_location[1]
-                    print(location_matrix)
+                    #print(location_matrix)
 
-                    Area_matrix[location[0], location[1]] = d+1
+                else:
+                    location_matrix[d,k+1] = location_matrix[d,k]
+                Area_matrix[location[0], location[1]] = d + 1
 
         for m in range(len - 1):
             instance_next = instance[m + 1]
@@ -106,7 +108,7 @@ for i in range(Gen):
     nf1.append(np.mean(normalized_f1))
     #print("Norm_f1 ",i , normalized_f1)
     normalized_f2 = f2 / max_f2
-    print(normalized_f2)
+    #print(normalized_f2)
     nf2.append(np.mean(normalized_f2))
     #print("Norm_f2 ", i, normalized_f2)
     normalized_f3 = f3 / max_f3
@@ -142,11 +144,11 @@ for i in range(Gen):
         New_Instances[n] = crossover(New_Instances1, New_Instances2, cross)
         New_Instances[n+int(Pop/2)] = crossover(New_Instances2, New_Instances1, cross)
     Mutated_cells = np.random.rand(Pop, len) < mu
-    '''for z in range(BK):
+    for z in range(BK):
         index = indexes[z]
         New_Instances[BK] = Instances_matrix[index]
         BK += 1
-    BK = int(Pop/2)'''
+    BK = int(Pop/2)
     for x in range(Pop):
         for y in range(len):
             if Mutated_cells[x][y] <= mu:
@@ -161,21 +163,21 @@ for i in range(Gen):
     #print(end_time - start)
     #print(New_Instances)
     #print('********************************')
-print(New_Instances[0])
-print(Instances_matrix[0])
+#print(New_Instances[0])
+#print(Instances_matrix[0])
 print(nf1)
 print(nf2)
 print(nf3)
-print(location_matrix)
+#print(location_matrix)
 #print(Instances_matrix[0])
 #print(best_instance)
 #print(avg_instance)
-#plt.plot(nf1)
-#plt.plot(nf2)
-#plt.plot(nf3)
-plt.imshow(location_matrix)
-plt.plot(best_instance)
-plt.plot(avg_instance)
+plt.plot(nf1)
+plt.plot(nf2)
+plt.plot(nf3)
+#plt.imshow(location_matrix)
+#plt.plot(best_instance)
+#plt.plot(avg_instance)
 plt.show()
 
 
