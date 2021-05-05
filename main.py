@@ -29,7 +29,7 @@ hareket = [[0, 1],  # yukarı 0
 area_x = 9
 area_y = 9
 Pop = 1000
-drones = 4
+drones = 2
 d = 0
 i = 0
 j = 0
@@ -41,7 +41,7 @@ location = np.array([0, 0])
 len = drones*80
 Instances_matrix = [0]
 mu = 0.01
-Gen = 200
+Gen = 100
 ctr = 0
 BI = int(Pop / 4)  # direkt aktarılacak nesil üyesi sayısı
 bas_x = 0
@@ -142,20 +142,29 @@ for i in range(Gen):
     end_time = time.time()
     print(ctr, end_time - start)
     ctr += 1
-Area_matrix = np.zeros((area_x, area_y), dtype=int) #matrisi çizdirmek için alan matrisimizi 0'lıyoruz
+    if i == 20 or i == 50 or i == 100:
+        Area_matrix = np.zeros((area_x, area_y), dtype=int) #matrisi çizdirmek için alan matrisimizi 0'lıyoruz
 
-for b in range(drones): # alan matrisini her drone için çizdirmeye yarayan iç içe 2 for döngüsü
-    for z in range(int(len/drones)):
-        location[0] = int(location_matrix[b, z] / 10)
-        location[1] = location_matrix[b, z] - location[0] * 10
-        Area_matrix[location[0], location[1]] = 1
+        plt.plot(best_instance)
+        plt.plot(avg_instance)
+
+        plt.pause(5)
         plt.clf()
-        cmap = matplotlib.colors.ListedColormap(np.random.rand(256, 3))
-        plt.imshow(Area_matrix, cmap= cmap)
-    Area_matrix = np.zeros((area_x, area_y), dtype=int)
-    plt.pause(10)
-    plt.clf()
-plt.show()
+        for b in range(drones): # alan matrisini her drone için çizdirmeye yarayan iç içe 2 for döngüsü
+            cmap = matplotlib.colors.ListedColormap(np.random.rand(256, 3))
+            for z in range(int(len/drones)):
+                location[0] = int(location_matrix[b, z] / 10)
+                location[1] = location_matrix[b, z] - location[0] * 10
+                Area_matrix[location[0], location[1]] = 1
+                plt.clf()
+                label = b+1,".Drone" ,i,". jenerasyon "
+                plt.title(label)
+                plt.imshow(Area_matrix, cmap= cmap)
+                plt.pause(0.5)
+            Area_matrix = np.zeros((area_x, area_y), dtype=int)
+            plt.pause(10)
+            plt.clf()
+        plt.show()
 
 
 
