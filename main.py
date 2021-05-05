@@ -1,22 +1,22 @@
 import sys
 
-import matplotlib
+from matplotlib import cm
 import numpy as np
 import time
 from matplotlib import pyplot as plt
 
 np.set_printoptions(threshold=sys.maxsize)
 
-def crossover(a, b, cross):
+def crossover(a, b, cross):  #tek noktadan crossover yapmamızı sağlayan fonksiyon
     return np.concatenate([a[:cross], b[cross:]])
 
 def maximum(a, b):
-
     if a >= b:
         return a
     else:
         return b
 
+#drone hareketleri için kullanacağımız hareket matrisi
 hareket = [[0, 1],  # yukarı 0
            [-1, 1],  # sol üst 1
            [-1, 0],  # sol 2
@@ -26,10 +26,13 @@ hareket = [[0, 1],  # yukarı 0
            [1, 0],  # sağ 6
            [1, 1]]  # sağ üst 7
 
-area_x = 9
-area_y = 9
-Pop = 1000
-drones = 2
+area_x = 9  #alan matrisinin 1. boyutu
+area_y = 9  #alan matrisinin 2. boyutu
+Pop = 1000  #popülasyon sayısı
+drones = 2  #drone sayısı
+mu = 0.01   #her hareket için mutasyon olasılığı
+Gen = 100   #jenerasyon sayısı
+len = drones*80  #bir dronun yapacağı hareket sayısı
 d = 0
 i = 0
 j = 0
@@ -38,10 +41,7 @@ k = 1
 next_location = np.array([0, 0])
 location = np.array([0, 0])
 
-len = drones*80
 Instances_matrix = [0]
-mu = 0.01
-Gen = 100
 ctr = 0
 BI = int(Pop / 4)  # direkt aktarılacak nesil üyesi sayısı
 bas_x = 0
@@ -53,9 +53,8 @@ max_f2 = ((len - 1))*180
 max_f3 = len - 1
 best_instance = []
 avg_instance = []
-nf1 = []
-nf2 = []
-nf3 = []
+next_location[0] = 0  # hareket edilecek yönün x indisi
+next_location[1] = 0  # hareket edilecek yönün y indisi
 location_matrix = np.zeros((drones, int(len/drones)), dtype=int)
 
 start = time.time()#sayaç başlangıcı
@@ -76,8 +75,6 @@ for i in range(Gen):
         Area_matrix[bas_x, bas_y] = 1#başlangıç noktasını işaretledik
         for k in range(int(len/drones)-1):#droneların sırayla hareket etmelerini sağlayacak for döngüleri
             for d in range(drones):
-                next_location[0] = 0#hareket edilecek yönün x indisi
-                next_location[1] = 0#hareket edilecek yönün y indisi
                 location[0] = int(location_matrix[d,k] / 10)#bir önceki lokasyonun x indisine dönüştürülmesi
                 location[1] = location_matrix[d,k] - location[0]*10#bir önceki lokasyonun y indisine dönüştürülmesi
                 next_location = np.add(location, hareket[instance[(int(len/drones) * d) + k]])#yeni lokasyonun hesaplanması
@@ -151,7 +148,7 @@ for i in range(Gen):
         plt.pause(5)
         plt.clf()
         for b in range(drones): # alan matrisini her drone için çizdirmeye yarayan iç içe 2 for döngüsü
-            cmap = matplotlib.colors.ListedColormap(np.random.rand(256, 3))
+            cmap = cm.colors.ListedColormap(np.random.rand(256, 3))
             for z in range(int(len/drones)):
                 location[0] = int(location_matrix[b, z] / 10)
                 location[1] = location_matrix[b, z] - location[0] * 10
@@ -162,19 +159,7 @@ for i in range(Gen):
                 plt.imshow(Area_matrix, cmap= cmap)
                 plt.pause(0.5)
             Area_matrix = np.zeros((area_x, area_y), dtype=int)
-            plt.pause(10)
+            plt.pause(5)
             plt.clf()
+            plt.close()
         plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
